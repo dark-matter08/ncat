@@ -1,5 +1,6 @@
 services:
   ncat:
+    container_name: ncat
     build: .
     env_file:
       - .env.local.minio
@@ -16,11 +17,12 @@ services:
       - nca-network
 
   minio:
+    container_name: minio
     image: minio/minio:latest
     command: server /data --console-address ":9001"
     ports:
-      - "9060:9000"
-      - "9070:9001"
+      - "9000:9000"
+      - "9001:9001"
     environment:
       MINIO_ROOT_USER: VeRomArDsmOstatIOnEbU
       MINIO_ROOT_PASSWORD: aLEmoreSkyRuBStUROculaoLgEmaRdtoMbOARtimpeTeMEphYr
@@ -31,13 +33,14 @@ services:
       - nca-network
 
   minio-init:
+    container_name: minio-init
     image: minio/mc:latest
     depends_on:
       - minio
     entrypoint: >
       /bin/sh -c "
       sleep 5;
-      /usr/bin/mc alias set myminio http://minio:9060 VeRomArDsmOstatIOnEbU aLEmoreSkyRuBStUROculaoLgEmaRdtoMbOARtimpeTeMEphYr;
+      /usr/bin/mc alias set myminio http://minio:9000 VeRomArDsmOstatIOnEbU aLEmoreSkyRuBStUROculaoLgEmaRdtoMbOARtimpeTeMEphYr;
       /usr/bin/mc mb myminio/nca-toolkit-local --ignore-existing;
       /usr/bin/mc anonymous set public myminio/nca-toolkit-local;
       echo 'MinIO bucket nca-toolkit-local created and configured as public';
